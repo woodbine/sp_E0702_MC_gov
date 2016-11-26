@@ -85,7 +85,7 @@ def convert_mth_strings ( mth_string ):
 #### VARIABLES 1.0
 
 entity_id = "E0702_MC_gov"
-url = "http://www.middlesbrough.gov.uk/index.aspx?articleid=2059"
+url = "https://www.middlesbrough.gov.uk/open-data-foi-and-have-your-say/open-data-and-policies/payments-over-%C2%A3500"
 errors = 0
 data = []
 
@@ -98,13 +98,13 @@ soup = BeautifulSoup(html, "lxml")
 
 #### SCRAPE DATA
 
-block = soup.find('table', 'greengeneral')
+block = soup.find('tableclass', attrs={'summary':'500 pound spend'})
 links = block.findAll('a', href=True)
 for link in links:
-    if '.csv' in link.text:
-        url = 'http://www.middlesbrough.gov.uk/' + link['href']
-        csvMth = link.text.split(' ')[0][:3]
-        csvYr = link.text.split(' ')[1][:4]
+    if '.csv' in link['href']:
+        url = link['href']
+        csvMth = link.text.split(' - ')[-1][:3]
+        csvYr = link.text.split(' - ')[-1].split()[1][:4]
         csvMth = convert_mth_strings(csvMth.upper())
         data.append([csvYr, csvMth, url])
 
@@ -130,4 +130,3 @@ if errors > 0:
 
 
 #### EOF
-
