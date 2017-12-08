@@ -1,4 +1,4 @@
- #-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #### IMPORTS 1.0
 import os
@@ -98,15 +98,24 @@ soup = BeautifulSoup(html, "lxml")
 
 #### SCRAPE DATA
 
-block = soup.find('tableclass', attrs={'summary':'500 pound spend'})
-links = block.findAll('a', href=True)
-for link in links:
-    if '.csv' in link['href']:
-        url = link['href']
-        csvMth = link.text.split(' - ')[-1][:3]
-        csvYr = link.text.split(' - ')[-1].split()[1][:4]
-        csvMth = convert_mth_strings(csvMth.upper())
-        data.append([csvYr, csvMth, url])
+blocks = soup.find_all('td')
+for block in blocks:
+    links = block.find_all('a')
+    if len(links) == 1:
+        for link in links:
+            if '.csv' in link['href'] or 'xls' in link['href']:
+                url = link['href']
+                csvMth = link.text.split(' - ')[-1][:3]
+                csvYr = link.text.split(' - ')[-1].split()[1][:4]
+                csvMth = convert_mth_strings(csvMth.upper())
+                data.append([csvYr, csvMth, url])
+    else:
+        for link in links:
+            if 'August' in link['href']:
+                url = link['href']
+                csvMth = '08'
+                csvYr = '2017'
+                data.append([csvYr, csvMth, url])
 
 
 #### STORE DATA 1.0
